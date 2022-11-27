@@ -15,25 +15,27 @@ import java.util.Arrays;
 public final class App {
     /**
      * Says hello to the world.
+     * 
      * @param args The arguments of the program.
      */
     WordFrequency wf;
     InvertedIndex invertedIndex;
 
     public String[] keywords;
-    private void menu () {
+
+    private void menu() {
         int swValue = 0;
-		HotelList hotelListObj = new HotelList();
+        HotelList hotelListObj = new HotelList();
 
         // Display menu graphics
         Scanner sc = new Scanner(System.in);
         WordFrequency wf = null;
         InvertedIndex invertedIndex = null;
-        while(swValue != 4) {
+        while (swValue != 4) {
             try {
                 // Runtime.getRuntime().exec("cls");
-                // System.out.print("\033[H\033[2J");  
-                System.out.flush(); 
+                // System.out.print("\033[H\033[2J");
+                System.out.flush();
                 System.out.println("\n\n");
                 System.out.println("|==================================================================|");
                 System.out.println("|                    MAIN MENU                                     |");
@@ -82,23 +84,23 @@ public final class App {
     }
 
     void search(Scanner sc) {
-        SplayTree<SearchedQueryFrequency> splayTree = HotelList.getSplayTree();
-        SearchedQueryFrequency frequency =  splayTree.getMostRecentlyAccessedElement();
-        if(frequency!=null)
-            System.out.println("Most recently searched query is "+frequency.getQuery()+" having frequency "+frequency.getCount()+"\n");
+        SplayTree splayTree = HotelList.getSplayTree();
+        SearchedQueryFrequency frequency = splayTree.root;
+        if (frequency != null)
+            System.out.println("Most recently searched query is " + frequency.getQuery() + " having frequency "
+                    + frequency.getCount() + "\n");
 
         keywords = getSearchKeywords(sc);
         Set<String> documentSet = invertedIndex.search(keywords);
-		Map<String, Integer> scoreMap = wf.calculateScores(keywords, documentSet);  
+        Map<String, Integer> scoreMap = wf.calculateScores(keywords, documentSet);
 
-        
-		PageRank pagerank = new PageRank(scoreMap);
-		pagerank.rankPages();
-		List<String> hotelNameList = pagerank.getTopKHotels(10);
-        if(!hotelNameList.isEmpty()) {
+        PageRank pagerank = new PageRank(scoreMap);
+        pagerank.rankPages();
+        List<String> hotelNameList = pagerank.getTopKHotels(10);
+        if (!hotelNameList.isEmpty()) {
             System.out.println("\nSearched string was found in following pages:");
             for (String hotel : hotelNameList) {
-                System.out.println("  -- "+hotel);
+                System.out.println("  -- " + hotel);
             }
         } else {
             System.out.println("Sorry! text you entered was not found.");
@@ -106,14 +108,14 @@ public final class App {
         System.out.print("\n");
     }
 
-    void printIndex () {
+    void printIndex() {
         System.out.println("Word Frequency: ");
         wf.printIndex();
         System.out.println("Inverted Index: ");
         invertedIndex.printIndex();
     }
 
-    void crawl (Scanner sc) {
+    void crawl(Scanner sc) {
         Date starDate = new Date();
         Date endDate = new Date(starDate.getTime() + 7 * 24 * 60 * 60 * 1000);
 
@@ -126,15 +128,15 @@ public final class App {
             }
         }
     }
-    
-    void createIndex (Scanner sc) {
+
+    void createIndex(Scanner sc) {
         System.out.println("Creating word Frequency map...");
         wf = new WordFrequency(HotelList.getHotelList());
-		wf.setWordFrequencies();
+        wf.setWordFrequencies();
         // wf.printIndex();
-		System.out.println("Creating Inverted index...");
-		invertedIndex = new InvertedIndex(HotelList.getHotelList());
-		invertedIndex.createIndex();
+        System.out.println("Creating Inverted index...");
+        invertedIndex = new InvertedIndex(HotelList.getHotelList());
+        invertedIndex.createIndex();
         // invertedIndex.printIndex();
     }
 
@@ -147,23 +149,23 @@ public final class App {
         }
     }
 
-    String[] getSearchKeywords (Scanner sc) {
+    String[] getSearchKeywords(Scanner sc) {
         System.out.print("Enter the Search query: ");
         String query = sc.nextLine();
 
         saveInSplayTree(query);
 
-        String[] words = query.toLowerCase().split( "\\s+");  
+        String[] words = query.toLowerCase().split("\\s+");
         System.out.println(Arrays.toString(words));
         return words;
     }
 
     private void saveInSplayTree(String query) {
 
-        SplayTree<SearchedQueryFrequency> splayTree = HotelList.getSplayTree();
+        SplayTree splayTree = HotelList.getSplayTree();
         SearchedQueryFrequency queryFrequency = new SearchedQueryFrequency(query, 1);
-        SearchedQueryFrequency searchedQueryFrequency = splayTree.getElement(queryFrequency);
-        if(searchedQueryFrequency!=null)
+        SearchedQueryFrequency searchedQueryFrequency = splayTree.search(queryFrequency);
+        if (searchedQueryFrequency != null)
             searchedQueryFrequency.setCount(searchedQueryFrequency.getCount() + 1);
         else {
             splayTree.insert(queryFrequency);

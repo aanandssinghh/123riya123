@@ -1,364 +1,162 @@
 package hotelprice;
 
-import java.io.Serializable;
+class SplayTree {
+    public SearchedQueryFrequency root;
 
-//SplayTree class
-//
-//CONSTRUCTION: with no initializer
-//
-//******************PUBLIC OPERATIONS*********************
-//void insert( x )       --> Insert x
-//void remove( x )       --> Remove x
-//boolean contains( x )  --> Return true if x is found
-//Comparable findMin( )  --> Return smallest item
-//Comparable findMax( )  --> Return largest item
-//boolean isEmpty( )     --> Return true if empty; else false
-//void makeEmpty( )      --> Remove all items
-//void printTree( )      --> Print tree in sorted order
-//******************ERRORS********************************
-//Throws UnderflowException as appropriate
+    public SplayTree() {
+        this.root = null;
+    }
 
-/**
-* Implements a top-down splay tree.
-* Note that all "matching" is based on the compareTo method.
-* @author Mark Allen Weiss
-*/
-public class SplayTree<AnyType extends Comparable<? super AnyType>> implements Serializable
-{
- /**
-  * Construct the tree.
-  */
- public SplayTree( )
- {
-     nullNode = new BinaryNode<AnyType>( null );
-     nullNode.left = nullNode.right = nullNode;
-     root = nullNode;
- }
+    public SearchedQueryFrequency maximum(SearchedQueryFrequency x) {
+        while (x.right != null)
+            x = x.right;
+        return x;
+    }
 
- private BinaryNode<AnyType> newNode = null;  // Used between different inserts
- 
- /**
-  * Insert into the tree.
-  * @param x the item to insert.
-  */
- public void insert( AnyType x )
- {
-     if( newNode == null )
-         newNode = new BinaryNode<AnyType>( null );
-     newNode.element = x;
+    public void leftRotate(SearchedQueryFrequency x) {
+        SearchedQueryFrequency y = x.right;
+        x.right = y.left;
+        if (y.left != null) {
+            y.left.parent = x;
+        }
+        y.parent = x.parent;
+        if (x.parent == null) { // x is root
+            this.root = y;
+        } else if (x == x.parent.left) { // x is left child
+            x.parent.left = y;
+        } else { // x is right child
+            x.parent.right = y;
+        }
+        y.left = x;
+        x.parent = y;
+    }
 
-     if( root == nullNode )
-     {
-         newNode.left = newNode.right = nullNode;
-         root = newNode;
-     }
-     else
-     {
-         root = splay( x, root );
-			
-			int compareResult = x.compareTo( root.element );
-			
-         if( compareResult < 0 )
-         {
-             newNode.left = root.left;
-             newNode.right = root;
-             root.left = nullNode;
-             root = newNode;
-         }
-         else
-         if( compareResult > 0 )
-         {
-             newNode.right = root.right;
-             newNode.left = root;
-             root.right = nullNode;
-             root = newNode;
-         }
-         else
-             return;   // No duplicates
-     }
-     newNode = null;   // So next insert will call new
- }
+    public void rightRotate(SearchedQueryFrequency x) {
+        SearchedQueryFrequency y = x.left;
+        x.left = y.right;
+        if (y.right != null) {
+            y.right.parent = x;
+        }
+        y.parent = x.parent;
+        if (x.parent == null) { // x is root
+            this.root = y;
+        } else if (x == x.parent.right) { // x is left child
+            x.parent.right = y;
+        } else { // x is right child
+            x.parent.left = y;
+        }
+        y.right = x;
+        x.parent = y;
+    }
 
- /**
-  * Remove from the tree.
-  * @param x the item to remove.
-  */
- public void remove( AnyType x )
- {
-     if( !contains( x ) )
-         return;
+    public void splay(SearchedQueryFrequency n) {
+        while (n.parent != null) { // SearchedQueryFrequency is not root
+            if (n.parent == this.root) { // SearchedQueryFrequency is child of root, one rotation
+                if (n == n.parent.left) {
+                    this.rightRotate(n.parent);
+                } else {
+                    this.leftRotate(n.parent);
+                }
+            } else {
+                SearchedQueryFrequency p = n.parent;
+                SearchedQueryFrequency g = p.parent; // grandparent
 
-     BinaryNode<AnyType> newTree;
+                if (n.parent.left == n && p.parent.left == p) { // both are left children
+                    this.rightRotate(g);
+                    this.rightRotate(p);
+                } else if (n.parent.right == n && p.parent.right == p) { // both are right children
+                    this.leftRotate(g);
+                    this.leftRotate(p);
+                } else if (n.parent.right == n && p.parent.left == p) {
+                    this.leftRotate(p);
+                    this.rightRotate(g);
+                } else if (n.parent.left == n && p.parent.right == p) {
+                    this.rightRotate(p);
+                    this.leftRotate(g);
+                }
+            }
+        }
+    }
 
-         // If x is found, it will be splayed to the root by contains
-     if( root.left == nullNode )
-         newTree = root.right;
-     else
-     {
-         // Find the maximum in the left subtree
-         // Splay it to the root; and then attach right child
-         newTree = root.left;
-         newTree = splay( x, newTree );
-         newTree.right = root.right;
-     }
-     root = newTree;
- }
+    public void insert(SearchedQueryFrequency n) {
+        SearchedQueryFrequency y = null;
+        SearchedQueryFrequency temp = this.root;
+        while (temp != null) {
+            y = temp;
+            if (n.compareTo(temp) < 0)
+                temp = temp.left;
+            else
+                temp = temp.right;
+        }
+        n.parent = y;
 
- /**
-  * Find the smallest item in the tree.
-  * Not the most efficient implementation (uses two passes), but has correct
-  *     amortized behavior.
-  * A good alternative is to first call find with parameter
-  *     smaller than any item in the tree, then call findMin.
-  * @return the smallest item or throw UnderflowException if empty.
-  */
- public AnyType findMin( )
- {
-     if( isEmpty( ) )
-        return null;
+        if (y == null) // newly added SearchedQueryFrequency is root
+            this.root = n;
+        else if (n.compareTo(y) < 0)
+            y.left = n;
+        else
+            y.right = n;
 
-     BinaryNode<AnyType> ptr = root;
+        this.splay(n);
+    }
 
-     while( ptr.left != nullNode )
-         ptr = ptr.left;
+    public SearchedQueryFrequency search(SearchedQueryFrequency x) {
+        return search(root, x);
+    }
 
-     root = splay( ptr.element, root );
-     return ptr.element;
- }
+    private SearchedQueryFrequency search(SearchedQueryFrequency n, SearchedQueryFrequency x) {
+        if (n == null)
+            return null;
+        if (x.compareTo(n) == 0) {
+            this.splay(n);
+            return n;
+        } else if (x.compareTo(n) < 0)
+            return this.search(n.left, x);
+        else if (x.compareTo(n) > 0)
+            return this.search(n.right, x);
+        else
+            return null;
+    }
 
- /**
-  * Find the largest item in the tree.
-  * Not the most efficient implementation (uses two passes), but has correct
-  *     amortized behavior.
-  * A good alternative is to first call find with parameter
-  *     larger than any item in the tree, then call findMax.
-  * @return the largest item or throw UnderflowException if empty.
-  */
- public AnyType findMax( )
- {
-     if( isEmpty( ) )
-        return null;
+    public void delete(SearchedQueryFrequency n) {
+        this.splay(n);
 
-     BinaryNode<AnyType> ptr = root;
+        SplayTree leftSubtree = new SplayTree();
+        leftSubtree.root = this.root.left;
+        if (leftSubtree.root != null)
+            leftSubtree.root.parent = null;
 
-     while( ptr.right != nullNode )
-         ptr = ptr.right;
+        SplayTree rightSubtree = new SplayTree();
+        rightSubtree.root = this.root.right;
+        if (rightSubtree.root != null)
+            rightSubtree.root.parent = null;
 
-     root = splay( ptr.element, root );
-     return ptr.element;
- }
+        if (leftSubtree.root != null) {
+            SearchedQueryFrequency m = leftSubtree.maximum(leftSubtree.root);
+            leftSubtree.splay(m);
+            leftSubtree.root.right = rightSubtree.root;
+            this.root = leftSubtree.root;
+        } else {
+            this.root = rightSubtree.root;
+        }
+    }
 
- /**
-  * Find an item in the tree.
-  * @param x the item to search for.
-  * @return true if x is found; otherwise false.
-  */
- public boolean contains( AnyType x )
- {
-     if( isEmpty( ) )
-         return false;
-			
-     root = splay( x, root );
+    public void inorder(SearchedQueryFrequency n) {
+        if (n != null) {
+            inorder(n.left);
+            System.out.println(n.getQuery());
+            inorder(n.right);
+        }
+    }
 
-     return root.element.compareTo( x ) == 0;
- }
+    public static void main(String[] args) {
+        SplayTree t = new SplayTree();
 
- public AnyType getElement( AnyType x )
- {
-    if( isEmpty( ) )
-        return null;
-			
-    root = splay( x, root );
-    if(root!=null) {
-        remove(root.element); 
-        insert(root.element); 
-        return root.element;
-    }    
-    return null;  
- }
-
- public AnyType getMostRecentlyAccessedElement() {
-    if( isEmpty( ) ) {
-        return null;
-    } 
-    return root.element;
- }
-
-
-
- /**
-  * Make the tree logically empty.
-  */
- public void makeEmpty( )
- {
-     root = nullNode;
- }
-
- /**
-  * Test if the tree is logically empty.
-  * @return true if empty, false otherwise.
-  */
- public boolean isEmpty( )
- {
-     return root == nullNode;
- }
-
- private BinaryNode<AnyType> header = new BinaryNode<AnyType>( null ); // For splay
- 
- /**
-  * Internal method to perform a top-down splay.
-  * The last accessed node becomes the new root.
-  * @param x the target item to splay around.
-  * @param t the root of the subtree to splay.
-  * @return the subtree after the splay.
-  */
- private BinaryNode<AnyType> splay( AnyType x, BinaryNode<AnyType> t )
- {
-     BinaryNode<AnyType> leftTreeMax, rightTreeMin;
-
-     header.left = header.right = nullNode;
-     leftTreeMax = rightTreeMin = header;
-
-     nullNode.element = x;   // Guarantee a match
-
-     for( ; ; )
-     {
-			int compareResult = x.compareTo( t.element );
-			
-         if( compareResult < 0 )
-         {
-             if( x.compareTo( t.left.element ) < 0 )
-                 t = rotateWithLeftChild( t );
-             if( t.left == nullNode )
-                 break;
-             // Link Right
-             rightTreeMin.left = t;
-             rightTreeMin = t;
-             t = t.left;
-         }
-         else if( compareResult > 0 )
-         {
-             if( x.compareTo( t.right.element ) > 0 )
-                 t = rotateWithRightChild( t );
-             if( t.right == nullNode )
-                 break;
-             // Link Left
-             leftTreeMax.right = t;
-             leftTreeMax = t;
-             t = t.right;
-         }
-         else
-             break;
-     }	
-
-     leftTreeMax.right = t.left;
-     rightTreeMin.left = t.right;
-     t.left = header.right;
-     t.right = header.left;
-     return t;
- }
-
- /**
-  * Rotate binary tree node with left child.
-  * For AVL trees, this is a single rotation for case 1.
-  */
- private static <AnyType> BinaryNode<AnyType> rotateWithLeftChild( BinaryNode<AnyType> k2 )
- {
-     BinaryNode<AnyType> k1 = k2.left;
-     k2.left = k1.right;
-     k1.right = k2;
-     return k1;
- }
-
- /**
-  * Rotate binary tree node with right child.
-  * For AVL trees, this is a single rotation for case 4.
-  */
- private static <AnyType> BinaryNode<AnyType> rotateWithRightChild( BinaryNode<AnyType> k1 )
- {
-     BinaryNode<AnyType> k2 = k1.right;
-     k1.right = k2.left;
-     k2.left = k1;
-     return k2;
- }
-
- /**
-  * Print the tree contents in sorted order.
-  */
- public void printTree( )
- {
-     if( isEmpty( ) )
-         System.out.println( "Empty tree" );
-     else
-         printTree( root );
- }
-
- public void printTree(BinaryNode t)
- {
-     if (t != nullNode) {
-   		printTree(t.left);
-     	System.out.println(t.element);
-   		printTree(t.right);
-     }
- }
-
- 
- // Basic node stored in unbalanced binary search trees
- private static class BinaryNode<AnyType> implements Serializable
- {
-         // Constructors
-     BinaryNode( AnyType theElement )
-     {
-         this( theElement, null, null );
-     }
-
-     BinaryNode( AnyType theElement, BinaryNode<AnyType> lt, BinaryNode<AnyType> rt )
-     {
-         element  = theElement;
-         left     = lt;
-         right    = rt;
-     }
-
-     AnyType element;            // The data in the node
-     BinaryNode<AnyType> left;   // Left child
-     BinaryNode<AnyType> right;  // Right child
- }
-
- private BinaryNode<AnyType> root;
- private BinaryNode<AnyType> nullNode;
- 
-
-  // Test program; should print min and max and nothing else
- public static void main( String [ ] args )
- {
-     SplayTree<Integer> t = new SplayTree<Integer>( );
-     final int NUMS = 30;  // must be even
-
-     System.out.println( "Create the tree..." );
-
-     for( int i = 1; i < NUMS; i++)
-     {
-     //    System.out.println( "INSERT: " + i );
-         t.insert( i );
-     }
-     
-     System.out.println( "Tree after insterions:" );
-     t.printTree( );
-
-     for( int i = 1; i < NUMS; i++)
-     {
-    	 if (!t.contains( i ))
-    		 System.out.println("key " + i + " not found" );
-     }
-
-     for( int i = 1; i < NUMS; i++ )
-     {
-      //   System.out.println( "REMOVE: " + i );
-         t.remove( i );
-     }
-
-     System.out.println( "Tree after removals:" );
-     t.printTree( );
- }
+        t.insert(new SearchedQueryFrequency("hotels", 1));
+        System.out.println(t.root.getQuery());
+        t.insert(new SearchedQueryFrequency("toronto", 1));
+        System.out.println(t.root.getQuery());
+        t.search(new SearchedQueryFrequency("hotels", 1));
+        System.out.println(t.root.getQuery());
+    }
 }
-

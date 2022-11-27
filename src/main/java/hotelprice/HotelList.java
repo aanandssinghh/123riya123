@@ -14,27 +14,27 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
 
-public class HotelList implements Serializable{
-    private static Map<String,Hotel> hotelList = new HashMap<>();
+public class HotelList implements Serializable {
+	private static Map<String, Hotel> hotelList = new HashMap<>();
 	private static Map<String, HashSet<String>> locationMap = new HashMap<>();
 	private static Map<String, HashSet<String>> startDateMap = new HashMap<>();
 	private static Trie locationTrie = new Trie();
 	private static Trie allWordsTrie = new Trie();
 	private static String fileName = "./serializedValues";
-	private static SplayTree<SearchedQueryFrequency> splayTree = new SplayTree<>();
+	private static SplayTree splayTree = new SplayTree();
 
 	public HotelList() {
 		readValues();
 	}
 
-
-    public static void addDocumentToList(Document doc, WebDriver driver, Date startDate, Date endDate) {
+	public static void addDocumentToList(Document doc, WebDriver driver, Date startDate, Date endDate) {
 		Elements elements = doc.getElementsByClass("kzGk");
 		System.out.println("here. elements: " + elements.size());
 		// System.out.println(doc.html());
 		int count = 0;
 		for (Element element : elements) {
-			if (count == 2) break;
+			if (count == 2)
+				break;
 			count++;
 			int index = hotelList.size();
 			String price = element.getElementsByClass("zV27-price").first().text();
@@ -43,26 +43,26 @@ public class HotelList implements Serializable{
 			String name = element.getElementsByClass("FLpo-big-name").first().text().toLowerCase();
 			String url = Config.DOMAIN_NAME + element.getElementsByClass("FLpo-big-name").first().attr("href");
 			String text = fetchTextFromUrl(driver, url, name).toLowerCase();
-			
+
 			String[] words = text.split(" ");
 			words = Arrays.asList(words).stream().map(String::toLowerCase).toArray(String[]::new);
 			allWordsTrie.insertWords(Arrays.asList(words));
 			List<String> locationList = new ArrayList<>();
 			locationList.add(location.toLowerCase());
 			locationTrie.insertWords(locationList);
-			
+
 			System.out.println("Crawled: " + name);
 
-			//create maps based on location, startDate. 
-			//Map has a key as location/startDate and value is a index of hotels.
+			// create maps based on location, startDate.
+			// Map has a key as location/startDate and value is a index of hotels.
 			addToMap(locationMap, location, name);
-			
+
 			addToMap(startDateMap, Common.convertDate(startDate), name);
-			
-			hotelList.put(name, new Hotel(price, location, score, name, url, words)); 
+
+			hotelList.put(name, new Hotel(price, location, score, name, url, words));
 			saveValues();
 		}
-    }
+	}
 
 	public static void addToMap(Map<String, HashSet<String>> map, String key, String hotelName) {
 		if (map.containsKey(key)) {
@@ -84,7 +84,7 @@ public class HotelList implements Serializable{
 		return locationMap;
 	}
 
-	public static Map<String,Hotel> getHotelList() {
+	public static Map<String, Hotel> getHotelList() {
 		return hotelList;
 	}
 
@@ -92,10 +92,10 @@ public class HotelList implements Serializable{
 		return startDateMap;
 	}
 
-	public static SplayTree<SearchedQueryFrequency> getSplayTree() {
+	public static SplayTree getSplayTree() {
 		return splayTree;
 	}
-	
+
 	public static Trie getAllWordsTrie() {
 		return allWordsTrie;
 	}
@@ -121,7 +121,7 @@ public class HotelList implements Serializable{
 		try {
 			FileInputStream fileIn = new FileInputStream(fileName);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
-			hotelList = (Map<String,Hotel>) in.readObject();
+			hotelList = (Map<String, Hotel>) in.readObject();
 			locationMap = (Map<String, HashSet<String>>) in.readObject();
 			startDateMap = (Map<String, HashSet<String>>) in.readObject();
 			locationTrie = (Trie) in.readObject();
@@ -137,7 +137,6 @@ public class HotelList implements Serializable{
 			return;
 		}
 	}
-
 
 	public static Trie getLocationTrie() {
 		return locationTrie;
