@@ -43,8 +43,8 @@ public final class App {
                 System.out.println("| Options:                                                         |");
                 System.out.println("|        1. Crawl the site                                         |");
                 System.out.println("|        2. Create word freq and inverted index                    |");
-                System.out.println("|        3. Search pages                                           |");
-                System.out.println("|        4. Enter user input                                       |");
+                System.out.println("|        3. Search anything                                        |");
+                System.out.println("|        4. Enter precise search criteria                          |");
                 System.out.println("|        5. Exit                                                   |");
                 System.out.println("|==================================================================|");
                 // swValue = Keyin.inInt(" Select option: ");
@@ -87,7 +87,7 @@ public final class App {
         SplayTree splayTree = HotelList.getSplayTree();
         SearchedQueryFrequency frequency = splayTree.root;
         if (frequency != null)
-            System.out.println("Most recently searched query is " + frequency.getQuery() + " having frequency "
+            System.out.println("Most recently searched query is '" + frequency.getQuery() + "' having frequency "
                     + frequency.getCount() + "\n");
 
         keywords = getSearchKeywords(sc);

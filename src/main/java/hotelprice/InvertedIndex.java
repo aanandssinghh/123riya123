@@ -38,7 +38,7 @@ public class InvertedIndex {
     // mapping of word with list of documentIndex where word appears.
     // TODO: use hash set instead of List<integer> to avoid adding hotel at the end
     // of the list, if we crawl the same page again.
-    Map<String, List<String>> indexOfHotelList = new HashMap<>();
+    Map<String, HashSet<String>> indexOfHotelList = new HashMap<>();
     Map<String, Hotel> hotelMap;
 
     public void addToIndex(Hotel hotel) {
@@ -47,9 +47,9 @@ public class InvertedIndex {
 
         for (String w : new HashSet<String>(Arrays.asList(words))) {
             String word = w.toLowerCase();
-            List<String> hotelNameList = indexOfHotelList.get(word);
+            HashSet<String> hotelNameList = indexOfHotelList.get(word);
             if (hotelNameList == null) {
-                hotelNameList = new LinkedList<String>();
+                hotelNameList = new HashSet<String>();
                 indexOfHotelList.put(word, hotelNameList);
             }
             hotelNameList.add(hotelName);
@@ -68,7 +68,7 @@ public class InvertedIndex {
         Set<String> hotelSet = new HashSet<>();
         for (String w : words) {
             String word = w.toLowerCase();
-            List<String> hotelNamesList = indexOfHotelList.get(word);
+            HashSet<String> hotelNamesList = indexOfHotelList.get(word);
             if (hotelNamesList != null) {
                 for (String hotel : hotelNamesList) {
                     hotelSet.add(hotel);
