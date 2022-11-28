@@ -33,9 +33,9 @@ public class HotelList implements Serializable {
 		// System.out.println(doc.html());
 		int count = 0;
 		for (Element element : elements) {
-			if (count == 2)
-				break;
-			count++;
+			// if (count == 2)
+			// break;
+			// count++;
 			int index = hotelList.size();
 			String price = element.getElementsByClass("zV27-price").first().text();
 			String location = element.getElementsByClass("FLpo-location-name").first().text().toLowerCase();

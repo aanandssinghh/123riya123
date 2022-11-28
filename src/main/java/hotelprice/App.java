@@ -112,7 +112,7 @@ public final class App {
         System.out.println("Word Frequency: ");
         wf.printIndex();
         System.out.println("Inverted Index: ");
-        invertedIndex.printIndex();
+        // invertedIndex.printIndex();
     }
 
     void crawl(Scanner sc) {
