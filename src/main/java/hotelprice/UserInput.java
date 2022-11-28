@@ -148,7 +148,8 @@ public class UserInput {
             Hotel hotel = hotelList.get(hotelName);
             String hotelRating = hotel.getScore();
 
-            String hotelPrice = hotel.getPrice().substring(3);
+            String hotelPrice = hotel.getPrice().substring(3).replace(",", "");
+
             float rating = Float.parseFloat(hotelRating);
             float price = Float.parseFloat(hotelPrice);
 
