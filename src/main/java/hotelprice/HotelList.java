@@ -33,7 +33,7 @@ public class HotelList implements Serializable {
 		// System.out.println(doc.html());
 		int count = 0;
 		for (Element element : elements) {
-			// if (count == 2)
+			// if (count == 1)
 			// break;
 			// count++;
 			int index = hotelList.size();
@@ -60,8 +60,8 @@ public class HotelList implements Serializable {
 			addToMap(startDateMap, Common.convertDate(startDate), name);
 
 			hotelList.put(name, new Hotel(price, location, score, name, url, words));
-			saveValues();
 		}
+		saveValues();
 	}
 
 	public static void addToMap(Map<String, HashSet<String>> map, String key, String hotelName) {

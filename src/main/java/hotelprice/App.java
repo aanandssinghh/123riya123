@@ -2,6 +2,10 @@ package hotelprice;
 
 import java.util.Scanner;
 import java.util.Set;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -120,12 +124,15 @@ public final class App {
         Date endDate = new Date(starDate.getTime() + 7 * 24 * 60 * 60 * 1000);
 
         for (Date date = starDate; date.before(endDate); date = new Date(date.getTime() + 24 * 60 * 60 * 1000)) {
-            WebCrawler webCrawler = new WebCrawler(date, date, 2);
+            System.setProperty("webdriver.chrome.driver", Config.CHROME_DRIVER_PATH);
+            WebDriver driver = new ChromeDriver();
+            WebCrawler webCrawler = new WebCrawler(date, date, 2, driver);
             webCrawler.runCrawler();
             System.out.println("Hotel List: ");
             for (String hotel : HotelList.getHotelList().keySet()) {
                 System.out.println(hotel);
             }
+            // driver.close();
         }
     }
 

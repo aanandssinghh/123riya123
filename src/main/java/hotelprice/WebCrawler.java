@@ -2,6 +2,7 @@ package hotelprice;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -20,12 +21,11 @@ public class WebCrawler {
 	private int numberOfAdults;
 	private WebDriver driver;
 
-	public WebCrawler(Date startDate, Date endDate, int numberOfAdults) {
+	public WebCrawler(Date startDate, Date endDate, int numberOfAdults, WebDriver driver) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.numberOfAdults = numberOfAdults;
-		System.setProperty("webdriver.chrome.driver", Config.CHROME_DRIVER_PATH);
-		this.driver = new ChromeDriver();
+		this.driver = driver;
 	}
 
 	private String buildURL(Date startDate, Date endDate, int numberOfAdults) {
