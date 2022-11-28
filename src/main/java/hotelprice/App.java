@@ -75,6 +75,7 @@ public final class App {
                         break;
                     case 5:
                         System.out.println("Exiting...");
+                        Thread.sleep(1000);
                         break;
                     default:
                         throw new Exception();
