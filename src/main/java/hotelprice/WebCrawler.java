@@ -50,34 +50,4 @@ public class WebCrawler {
 		HotelList.addDocumentToList(domForHotelList, this.driver, startDate, endDate);
 	}
 
-	// public static void main(String[] args) {
-	// 	WebCrawler webCrawler = new WebCrawler(new Date(), new Date(), 2);
-
-	// 	String url = webCrawler.buildURL(new Date(), new Date(), 2);
-	// 	String name = "start";
-
-	// 	String html = HTMLUtils.fetchHtml(webCrawler.driver, url, name);
-	// 	// class="kzGk"
-
-	// 	// webCrawler.parseHtml(html);
-	// 	Document doc = HTMLUtils.parse(html);
-	// 	HotelList hotelListObj = new HotelList();
-	// 	hotelListObj.addDocumentToList(doc, webCrawler.driver);
-	// 	// webCrawler.abc();
-
-	// 	WordFrequency wf = new WordFrequency(HotelList.list);
-	// 	wf.setWordFrequencies();
-	// 	System.out.println("Creating Inverted index...");
-	// 	InvertedIndex invertedIndex = new InvertedIndex(HotelList.list);
-	// 	invertedIndex.createIndex();
-
-	// 	String[] keywords = { "which", "making" };
-	// 	Set<Integer> documentSet = invertedIndex.search(keywords);
-	// 	Map<Integer, Integer> scoreMap = wf.calculateScores(keywords, documentSet);
-
-	// 	PageRank pagerank = new PageRank(scoreMap);
-	// 	pagerank.rankPages();
-	// 	List<Integer> documentIndexList = pagerank.getTopKDocuments(10);
-
-	// }
 }

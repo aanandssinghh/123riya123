@@ -38,16 +38,13 @@ public class WordFrequency {
     }
 
     public Map<String, Integer> calculateScores(String[] keywords, Set<String> hotelNamesSet) {
-        // TODO: instead of map we should have used priority queue here.
         Map<String, Integer> documentScoreMap = new HashMap<>();
         for (String hotelName : hotelNamesSet) {
             Map<String, Integer> wordFrequencyMap = frequencyMapOfEachHotel.get(hotelName);
             int score = 0;
-            // System.out.println(wordFrequencyMap.toString());
             for (String keyword : keywords) {
                 if (wordFrequencyMap.containsKey(keyword)) {
                     score += wordFrequencyMap.get(keyword);
-                    // score+=count;
                 }
             }
             documentScoreMap.put(hotelName, score);

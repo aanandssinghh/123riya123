@@ -44,6 +44,8 @@ public class UserInput {
         do {
             System.out.println("\nEnter the location: ");
             location = sc.nextLine();
+            if (validateLocation(location))
+                break;
             location = suggestNearestMatchingWord(sc, location, HotelList.getLocationMap().keySet());
             sc.nextLine();
         } while (!validateLocation(location));
@@ -289,16 +291,4 @@ public class UserInput {
         }
 
     }
-
-    // public static List<String> commonHotels(String[] keywords, String[] reviews,
-    // int k) {
-
-    // for (Map.Entry<String, Integer> entry : map.entrySet()) {
-    // pq.offer(entry);
-    // }
-    // while (k-- > 0) {
-    // result.add(pq.poll().getKey().substring(1));
-    // }
-    // return result;
-    // }
 }
