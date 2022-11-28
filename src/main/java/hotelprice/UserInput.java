@@ -280,6 +280,7 @@ public class UserInput {
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            sdf.setLenient(false);
             Date date1 = sdf.parse(date);
             if (date1.compareTo(todayCalendar.getTime()) < 0) {
                 return false;
