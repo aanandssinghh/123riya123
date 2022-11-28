@@ -29,16 +29,26 @@ public class UserInput {
         System.out.println("Enter the start date in dd/MM/yyyy format: ");
         startDate = sc.nextLine();
         while (!validateDate(startDate)) {
-            startDate1 = sdf.parse(startDate);
-            System.out.println("\nInvalid date format. Please enter the start date in the format dd/MM/yyyy: ");
-            startDate = sc.nextLine();
+            try {
+                startDate1 = sdf.parse(startDate);
+                System.out.println("\nInvalid date format. Please enter the start date in the format dd/MM/yyyy: ");
+                startDate = sc.nextLine();
+            } catch (Exception e) {
+                System.out.println("Not a valid date. Please enter again");
+                startDate = sc.nextLine();
+            }
         }
         System.out.println("\nEnter the end date in dd/MM/yyyy format: ");
         endDate = sc.nextLine();
         while (!validateDate(endDate)) {
-            endDate1 = sdf.parse(endDate);
-            System.out.println("\nInvalid date format. Please enter the end date in the format dd/MM/yyyy: ");
-            endDate = sc.nextLine();
+            try {
+                endDate1 = sdf.parse(endDate);
+                System.out.println("\nInvalid date format. Please enter the end date in the format dd/MM/yyyy: ");
+                endDate = sc.nextLine();
+            } catch (Exception e) {
+                System.out.println("Not a valid date. Please enter again");
+                startDate = sc.nextLine();
+            }
         }
 
         do {
@@ -117,6 +127,21 @@ public class UserInput {
                 new UserInput(sc);
             }
         }
+    }
+
+    private static boolean startEndDate(String startDate2, String endDate2) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Date date1 = sdf.parse(startDate2);
+            Date date2 = sdf.parse(endDate2);
+            if (date1.compareTo(date2) > 0) {
+                return false;
+            }
+            return true;
+        } catch (ParseException e) {
+            return false; // if date is not in the format dd/MM/yyyy
+        }
+
     }
 
     public class Entry implements Comparable<Entry> {
@@ -245,6 +270,11 @@ public class UserInput {
     }
 
     public static boolean validateDate(String date) throws ParseException {
+        if (startDate != null && !startDate.isEmpty()) {
+            if (!startEndDate(startDate, date)) {
+                return false;
+            }
+        }
         Date todayDate = new Date();
         Calendar todayCalendar = setDateToCalendar(todayDate);
 
