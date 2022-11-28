@@ -75,7 +75,6 @@ public final class App {
                         break;
                     case 5:
                         System.out.println("Exiting...");
-                        Thread.sleep(1000);
                         break;
                     default:
                         throw new Exception();
@@ -140,10 +139,13 @@ public final class App {
         System.out.println("Creating word Frequency map...");
         wf = new WordFrequency(HotelList.getHotelList());
         wf.setWordFrequencies();
+        System.out.println("Word Frequency map was created successfuly...\n");
+
         // wf.printIndex();
         System.out.println("Creating Inverted index...");
         invertedIndex = new InvertedIndex(HotelList.getHotelList());
         invertedIndex.createIndex();
+        System.out.println("Inverted index was done successfuly...");
         // invertedIndex.printIndex();
     }
 
